@@ -1,0 +1,101 @@
+/* Extra layout styles for cleaner write-ups */
+.about {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 20px 24px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    margin-bottom: 18px;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.flex-child img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+h3#linkTitleText {
+    margin-top: 18px;
+    font-size: 1.6rem;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.pleft,
+.pright {
+    box-sizing: border-box;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.pleft {
+    margin-right: 10px;
+}
+
+.pright {
+    margin-left: 10px;
+}
+
+/* Two-column layout for descriptions on larger screens */
+@media (min-width: 700px) {
+    .about {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 20px 30px;
+        align-items: start;
+    }
+
+    .about .flex-container {
+        grid-column: 1 / -1;
+    }
+
+    .pleft {
+        grid-column: 1 / 2;
+    }
+
+    .pright {
+        grid-column: 2 / 3;
+    }
+}
+
+/* Links list */
+ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+ul li a {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #fff;
+    display: inline-block;
+}
+
+ul li a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    text-decoration: none;
+}
+
+/* Small accessibility and spacing tweaks */
+.proName {
+    font-weight: 700;
+    letter-spacing: 0.6px;
+}
+
+#primaryDescription {
+    color: rgba(255, 255, 255, 0.85);
+    margin-left: 8px;
+}
