@@ -1,9 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const { MongoClient } = require('mongodb');
 
 const app = express();
+
+// Allow cross-origin requests from the frontend if it's served from a different origin
+app.use(cors());
+// Serve JSON and URL-encoded bodies if you add POST endpoints later
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 const PORT = process.env.PORT || 8080;
 const MONGO_URL = process.env.MONGO_URL; // set this in your .env file
 const MONGO_DB_NAME = process.env.MONGO_DB_NAME || 'web_services';
