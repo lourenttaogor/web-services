@@ -2,7 +2,7 @@ const MongoClient = require('mongodb').MongoClient;
 
 const initdb = (callback) => {
     // 1. Check if the URL is defined to avoid silent crashes
-    if (!process.env.CONTACT_URL) {
+    if (!process.env.MONGO_URL) {
         return callback(new Error("CONTACT_URL is not defined in environment variables"));
     }
 
