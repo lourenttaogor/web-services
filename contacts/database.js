@@ -1,40 +1,68 @@
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient } = require('mongodb');
+require('dotenv').config();
 
-const initdb = (callback) => {
-    // 1. Check if the URL is defined to avoid silent crashes
-    if (!process.env.MONGO_URL) {
-        return callback(new Error("CONTACT_URL is not defined in environment variables"));
+let _db = null;
+let _client = null;
+
+function cleanConnectionString(uri) {
+    // Don't use URL class - it doesn't work with mongodb+srv://
+    // Just ensure tls and ssl are present
+    let cleanedUri = uri;
+
+    // Check if tls is already there
+    const hasTls = cleanedUri.includes('tls=true');
+    const hasSsl = cleanedUri.includes('ssl=true');
+
+    if (!hasTls || !hasSsl) {
+        // Add missing parameters
+        const separator = cleanedUri.includes('?') ? '&' : '?';
+        if (!hasTls) cleanedUri += `${separator}tls=true`;
+        if (!hasSsl) cleanedUri += '&ssl=true';
     }
 
-    // 2. Connect using the URL
-    MongoClient.connect(process.env.MONGO_URL)
-        .then((client) => {
-            console.log("Connected successfully to MongoDB");
-            
-            // 3. Extract the database instance (e.g., 'contacts_db')
-            const db = client.db(); 
+    return cleanedUri;
+}
 
-            // 4. Pass the database back via the callback
-            callback(null, db);
-        })
-        .catch((err) => {
-            // 5. Handle connection errors
-            console.error("Connection failed:", err);
-            callback(err);
-        });
-};
+async function initdb(callback) {
+    try {
+        const uri = process.env.MONGO_URL;
+        const dbName = process.env.MONGO_DB_NAME;
 
+        if (!uri || !dbName) {
+            throw new Error('Missing MONGO_URL or MONGO_DB_NAME environment variables');
+        }
 
-const getDatabase = () => {
-    // Throw an error if someone tries to get the DB before it's initialized
-    if (!_db) {
-        throw new Error('Database not initialized. Call initdb first!');
+        const cleanedUri = cleanConnectionString(uri);
+
+        console.log('Connecting to MongoDB...');
+        _client = new MongoClient(cleanedUri);
+
+        await _client.connect();
+        _db = _client.db(dbName);
+
+        console.log('✅ Connected to MongoDB successfully');
+        callback(null, _db);
+    } catch (err) {
+        console.error('❌ Failed to connect to MongoDB:', err.message);
+        callback(err, null);
     }
+}
+
+function getDatabase() {
     return _db;
-};
+}
 
-// Export both functions
+async function closeDatabaseConnection() {
+    if (_client) {
+        await _client.close();
+        _db = null;
+        _client = null;
+        console.log('Database connection closed');
+    }
+}
+
 module.exports = {
     initdb,
-    getDatabase
+    getDatabase,
+    closeDatabaseConnection
 };
