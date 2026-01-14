@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
+const contactdb = require('./contacts/database');
+const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 
@@ -71,6 +73,27 @@ app.get('/professional', async (req, res) => {
 
   // Fallback
   res.json(fallbackProfessional);
+});
+
+
+//get Contact
+
+app.get('/contact', async (req, res) => {
+    try {
+        // 1. Use the exported getDatabase function correctly
+        const db = mongodb.getDatabase(); 
+
+        // 2. Await the toArray() directly for cleaner code
+        const contact = await db.collection('contact').find().toArray();
+
+        // 3. Send the actual data (remove quotes from 'contact')
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(contact); 
+
+    } catch (err) {
+        console.error('Error querying MongoDB:', err.message);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
 });
 
 // Graceful shutdown
