@@ -70,7 +70,6 @@ app.get('/professional', async (req, res) => {
       console.error('Error querying MongoDB:', err.message);
     }
   }
-
   // Fallback
   res.json(fallbackProfessional);
 });
@@ -78,12 +77,12 @@ app.get('/professional', async (req, res) => {
 
 //get Contact
 
-app.get('/contact', async (req, res) => {
+app.get('/contact-project', async (req, res) => {
     try {
         // 1. Use the exported getDatabase function correctly
         const db = contactdb.getDatabase(); 
         // 2. Await the toArray() directly for cleaner code
-        const contact = await db.collection('contact').find().toArray();
+        const contact = await db.collection('contact-project').find().toArray();
 
         // 3. Send the actual data (remove quotes from 'contact')
         res.setHeader('Content-Type', 'application/json');
