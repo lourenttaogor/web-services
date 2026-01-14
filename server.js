@@ -81,8 +81,7 @@ app.get('/professional', async (req, res) => {
 app.get('/contact', async (req, res) => {
     try {
         // 1. Use the exported getDatabase function correctly
-        const db = mongodb.getDatabase(); 
-
+        const db = contactdb.getDatabase(); 
         // 2. Await the toArray() directly for cleaner code
         const contact = await db.collection('contact').find().toArray();
 
@@ -119,6 +118,12 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+contactdb.initdb((err) => {
+  if (err) {
+    console.error('Failed to initialize database module:', err);
+  } else {
+    app.listen(PORT, () => {
+      console.log(`Server listening on http://localhost:${PORT}`);
+    });
+  }
 });
