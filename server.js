@@ -9,6 +9,10 @@ const professionalRoutes = require('./routes/professionalRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const healthRoutes = require('./routes/healthRoutes');
 
+// Import swagger
+const { swaggerUi, specs } = require('./swagger');
+console.log('Swagger imported successfully');
+
 const app = express();
 
 // Middleware
@@ -20,6 +24,14 @@ const PORT = process.env.PORT || 8080;
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Swagger UI
+if (swaggerUi && specs) {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+  console.log('Swagger UI enabled at /api-docs');
+} else {
+  console.log('Swagger UI disabled - packages not available');
+}
 
 // Use routes
 app.use('/professional', professionalRoutes);
