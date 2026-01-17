@@ -6,7 +6,7 @@ const doc = {
     description: 'A simple Express API for managing contacts',
   },
   host: 'localhost:8080',
-  schemes: ['http'],
+  schemes: ['http', 'https'],
   servers: [
     {
       url: 'http://localhost:8080',
