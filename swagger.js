@@ -5,7 +5,7 @@ const doc = {
     title: 'Contacts API',
     description: 'A simple Express API for managing contacts',
   },
-  host: 'localhost:8080',
+  host: 'https://web-services-ok3j.onrender.com',
   schemes: ['http', 'https'],
   servers: [
     {
