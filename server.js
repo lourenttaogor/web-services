@@ -11,15 +11,7 @@ const healthRoutes = require('./routes/healthRoutes');
 
 // Import swagger packages
 const swaggerUi = require('swagger-ui-express');
-let swaggerDocument;
-
-try {
-  swaggerDocument = require('./swagger-output.json');
-  console.log('Swagger documentation loaded successfully');
-} catch (error) {
-  console.error('Failed to load swagger documentation:', error.message);
-  swaggerDocument = null;
-}
+const swaggerDocument = require('./swagger');
 
 const app = express();
 

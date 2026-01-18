@@ -1,35 +1,27 @@
-const swaggerAutogen = require('swagger-autogen')();
+const swaggerJsdoc = require('swagger-jsdoc');
 
-const doc = {
-  info: {
-    title: 'Contacts API',
-    description: 'A simple Express API for managing contacts',
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Contacts API',
+      version: '1.0.0',
+      description: 'A simple Express API for managing contacts',
+    },
+    servers: [
+      {
+        url: process.env.NODE_ENV === 'production'
+          ? 'https://web-services-ok3j.onrender.com'
+          : 'http://localhost:8080',
+        description: process.env.NODE_ENV === 'production'
+          ? 'Production server'
+          : 'Development server',
+      },
+    ],
   },
-  host: 'https://web-services-ok3j.onrender.com',
-  schemes: ['http', 'https'],
-  servers: [
-    {
-      url: 'http://localhost:8080',
-      description: 'Development server',
-    },
-    {
-      url: 'https://web-services-ok3j.onrender.com',
-      description: 'Production server',
-    },
-  ],
+  apis: ['./routes/*.js'], // Path to the API routes
 };
 
-const outputFile = './swagger-output.json';
-// Point to the main server file that imports the routes
-const endpointsFiles = ['./server.js'];
+const specs = swaggerJsdoc(options);
 
-console.log('Starting swagger generation...');
-console.log('Output file:', outputFile);
-console.log('Endpoints files:', endpointsFiles);
-
-swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
-    console.log('Swagger documentation generated successfully!');
-    console.log('Output file:', outputFile);
-}).catch((error) => {
-    console.error('Error generating swagger documentation:', error);
-});
+module.exports = specs;
