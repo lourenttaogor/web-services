@@ -1,93 +1,55 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const cors = require('cors');
 const contactdb = require('./contacts/database');
+const bodyParser = require('body-parser');
 
 // Import routes
-const professionalRoutes = require('./routes/professionalRoutes');
-const contactRoutes = require('./routes/contactRoutes');
-const healthRoutes = require('./routes/healthRoutes');
+// const contactRoutes = require('./routes');
 
-// Import swagger packages
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger');
+// // Import swagger packages
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./swagger');
 
 const app = express();
 
-// Middleware
+
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 const PORT = process.env.PORT || 8080;
 
-// Serve static frontend files
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from public folder
+app.use(express.static('public'));
 
 // Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-console.log('Swagger UI enabled at /api-docs');
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// console.log('Swagger UI enabled at /api-docs');
 
 // Use routes
-app.use('/professional', professionalRoutes);
-app.use('/contacts', contactRoutes);
-app.use('/', healthRoutes);
-
-// Graceful shutdown
-async function closeResources() {
-  try {
-    // If contactdb has close function
-    if (contactdb.closeDatabaseConnection) {
-      await contactdb.closeDatabaseConnection();
-      console.log('Database connection closed');
-    }
-  } catch (err) {
-    console.error('Error closing resources:', err.message);
-  }
-}
-
-process.on('SIGINT', async () => {
-  console.log('SIGINT received — shutting down');
-  await closeResources();
-  process.exit(0);
+app.use(bodyParser.json());
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-requested-With, Content-Type, Accept, z-key'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  next();
 });
 
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received — shutting down');
-  await closeResources();
-  process.exit(0);
-});
+app.use('/', require('./routes'));
 
 
-
-// Initialize and start server
-async function startServer() {
-  try {
-    // Initialize database connection
-    contactdb.initdb((err, db) => {
-      if (err) {
-        console.error('⚠️ Database connection failed:', err.message);
-        console.log('⚠️ Starting server with fallback mode only');
-      } else {
-        console.log('✅ Database connected successfully');
-      }
-
-      // Start server after database initialization attempt
-      app.listen(PORT, () => {
-        console.log(`🚀 Server running on http://localhost:${PORT}`);
-        console.log(`Available endpoints:`);
-        console.log(`  GET /professional`);
-        console.log(`  GET /contacts`);
-        console.log(`  GET /health`);
-        console.log(`  GET /debug/collections`);
-      });
-    });
-
-  } catch (err) {
-    console.error('Failed to start server:', err.message);
-    process.exit(1);
+contactdb.initdb((err) => {
+  if (err) {
+    console.log(err)
+  } else {
+    app.listen(PORT, () => {
+      console.log(`Database is connected, node is running at ${PORT}`);
+      console.log(`Available endpoints:`);
+      console.log(`  GET /professional`);
+      console.log(`  GET /contacts`);
+    })
   }
-}
+})
 
-startServer();

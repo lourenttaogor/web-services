@@ -1,0 +1,36 @@
+### Get all contacts GET http://localhost:8080/contacts Content-Type: application/json
+
+###
+
+### Get a specific contact (replace with actual ID) # @contactId = 507f1f77bcf86cd799439011 GET http://localhost:8080/contacts/{{contactId}} Content-Type: application/json
+
+###
+
+### Create a new contact POST http://localhost:8080/contacts Content-Type: application/json
+
+{
+"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com", "favoriteColor": "blue", "birthday": "1990-01-15"
+}
+
+###
+
+### Get a specific contact (replace with actual ID) # @contactId = 507f1f77bcf86cd799439011 GET http://localhost:8080/contacts/{{contactId}} Content-Type: application/json
+
+###
+
+### Update a contact (replace with actual ID) # @contactId = 507f1f77bcf86cd799439011 PUT http://localhost:8080/contacts/{{contactId}} Content-Type: application/json
+
+{
+"firstName": "Jane", "lastName": "Smith", "email": "jane.smith@example.com", "favoriteColor": "green", "birthday": "1985-03-20"
+}
+
+###
+
+### Delete a contact (replace with actual ID) # @contactId = 507f1f77bcf86cd799439011 DELETE http://localhost:8080/contacts/{{contactId}} Content-Type: application/json
+
+###
+
+### Get professional data GET http://localhost:8080/professional Content-Type: application/json
+
+
+### Debug collections GET http://localhost:8080/debug/collections Content-Type: application/json

@@ -2,20 +2,31 @@
   "name": "web-services",
   "version": "1.0.0",
   "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/lourenttaogor/web-services#readme",
+  "bugs": {
+    "url": "https://github.com/lourenttaogor/web-services/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lourenttaogor/web-services.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
+    "autogen": "^0.0.1",
+    "body-parser": "^2.2.2",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^5.2.1",
     "mongodb": "^7.0.0",
+    "swagger": "^0.7.5",
     "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
