@@ -5,10 +5,9 @@
     "description": "API Docs",
     "version": "1.0.0"
   },
-  "host": "localhost:8080",
+  "host": "https://web-services-ok3j.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http",
     "https"
   ],
   "paths": {
@@ -164,7 +163,16 @@
           }
         }
       }
+    },
+    "/api-docs": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
-    
   }
 }
