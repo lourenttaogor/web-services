@@ -1,27 +1,16 @@
-const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerAutogen = require('swagger-autogen')();
 
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Contacts API',
-      version: '1.0.0',
-      description: 'A simple Express API for managing contacts',
-    },
-    servers: [
-      {
-        url: process.env.NODE_ENV === 'production'
-          ? 'https://web-services-ok3j.onrender.com'
-          : 'http://localhost:8080',
-        description: process.env.NODE_ENV === 'production'
-          ? 'Production server'
-          : 'Development server',
-      },
-    ],
+const doc = {
+  info: { title: 'My Express Router API', 
+    description: 'API Docs' 
   },
-  apis: ['./routes/*.js'], // Path to the API routes
+  host: 'https://web-services-ok3j.onrender.com',
+  // swagger-autogen prefers host and schemes over servers in some versions
+  schemes: ['https']
 };
 
-const specs = swaggerJsdoc(options);
+const outputFile = './swagger-output.json';
+const endpointsFiles = ['./routes/index.js']; // Point to your main router file
 
-module.exports = specs;
+swaggerAutogen(outputFile, endpointsFiles, doc);
+
