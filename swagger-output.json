@@ -195,19 +195,28 @@
             "schema": {
               "type": "object",
               "properties": {
-                "firstName": {
+                "userId": {
                   "example": "any"
                 },
-                "lastName": {
+                "providerName": {
                   "example": "any"
                 },
-                "email": {
+                "monthlyCost": {
                   "example": "any"
                 },
-                "favoriteColor": {
+                "category": {
                   "example": "any"
                 },
-                "birthday": {
+                "renewalDate": {
+                  "example": "any"
+                },
+                "paymentMethod": {
+                  "example": "any"
+                },
+                "status": {
+                  "example": "any"
+                },
+                "description": {
                   "example": "any"
                 }
               }
@@ -259,16 +268,28 @@
             "schema": {
               "type": "object",
               "properties": {
-                "username": {
+                "userId": {
                   "example": "any"
                 },
-                "email": {
+                "providerName": {
                   "example": "any"
                 },
-                "name": {
+                "monthlyCost": {
                   "example": "any"
                 },
-                "ipaddress": {
+                "category": {
+                  "example": "any"
+                },
+                "renewalDate": {
+                  "example": "any"
+                },
+                "paymentMethod": {
+                  "example": "any"
+                },
+                "status": {
+                  "example": "any"
+                },
+                "description": {
                   "example": "any"
                 }
               }
@@ -345,8 +366,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
+          "201": {
+            "description": "Created"
           },
           "500": {
             "description": "Internal Server Error"
@@ -371,6 +392,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       },
@@ -396,6 +420,9 @@
                   "example": "any"
                 },
                 "firstName": {
+                  "example": "any"
+                },
+                "lastName": {
                   "example": "any"
                 },
                 "accountCreated": {
@@ -430,16 +457,6 @@
           },
           "500": {
             "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api-docs": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
           }
         }
       }
