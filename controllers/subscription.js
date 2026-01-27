@@ -20,11 +20,15 @@ const getSingleSubscription = async (req, res) => {
 
 const createSubscription = async (req, res) => {
   const subscriptions = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    favoriteColor: req.body.favoriteColor,
-    birthday: req.body.birthday
+    _id: req.body._id,
+    userId: req.body.userId,
+    providerName: req.body.providerName,
+    monthlyCost: req.body.monthlyCost,
+    category: req.body.category,
+    renewalDate: req.body.renewalDate,
+    paymentMethod: req.body.paymentMethod,
+    status: req.body.status,
+    description: req.body.description
   }
 
   const response = await mongodb.getDatabase().db().collection('subscription').insertOne(subscriptions);
@@ -39,10 +43,14 @@ const updateSubscription = async (req, res) => {
   const subscriptionid = new ObjectID(req.params.id)
   
   const subscriptions = {
-    username: req.body.username,
-    email: req.body.email,
-    name: req.body.name,
-    ipaddress: req.body.ipaddress
+    userId: req.body.userId,
+    providerName: req.body.providerName,
+    monthlyCost: req.body.monthlyCost,
+    category: req.body.category,
+    renewalDate: req.body.renewalDate,
+    paymentMethod: req.body.paymentMethod,
+    status: req.body.status,
+    description: req.body.description
   }
 
   const response = await mongodb.getDatabase().db().collection('subscription').find({ _id: subscriptionid }, subscriptions);
