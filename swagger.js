@@ -4,9 +4,18 @@ const doc = {
   info: { title: 'My Express Router API', 
     description: 'API Docs' 
   },
-  host: 'https://web-services-ok3j.onrender.com',
+  servers: [
+    {
+      url: 'localhost:8080',
+      description: 'Local Development Server'
+    },
+    {
+      url: 'web-services-ok3j.onrender.com',
+      description: 'Production Server'
+    }
+  ], 
   // swagger-autogen prefers host and schemes over servers in some versions
-  schemes: ['https']
+  schemes: ['http', 'https']
 };
 
 const outputFile = './swagger-output.json';

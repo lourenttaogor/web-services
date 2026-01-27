@@ -4,12 +4,6 @@ const cors = require('cors');
 const contactdb = require('./contacts/database');
 const bodyParser = require('body-parser');
 
-// Import routes
-// const contactRoutes = require('./routes');
-
-// // Import swagger packages
-// const swaggerUi = require('swagger-ui-express');
-// const swaggerDocument = require('./swagger');
 
 const app = express();
 
@@ -21,9 +15,6 @@ const PORT = process.env.PORT || 8080;
 // Serve static files from public folder
 app.use(express.static('public'));
 
-// Swagger UI
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-// console.log('Swagger UI enabled at /api-docs');
 
 // Use routes
 app.use(bodyParser.json());
@@ -49,6 +40,8 @@ contactdb.initdb((err) => {
       console.log(`Available endpoints:`);
       console.log(`  GET /professional`);
       console.log(`  GET /contacts`);
+      console.log(`  GET /users`);
+      console.log(`  GET /subscriptions`);
     })
   }
 })

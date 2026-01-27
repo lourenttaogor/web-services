@@ -14,6 +14,7 @@ const initdb = (callback) => {
 })
     .catch((err) => {
         callback(err);
+        res.status(500).json(err);
     })
 }
 
