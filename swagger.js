@@ -12,6 +12,10 @@ const doc = {
     {
       url: 'web-services-ok3j.onrender.com',
       description: 'Production Server'
+    },
+    {
+      url: 'invidividual-project.onrender.com',
+      description: 'individual Server'
     }
   ], 
   // swagger-autogen prefers host and schemes over servers in some versions
