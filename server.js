@@ -7,43 +7,34 @@ const passport = require('passport');
 const session = require('express-session');
 const GithubStrategy = require('passport-github2').Strategy;
 
-
 const app = express();
 
-
-
-app.use(cors({methods: ['GET, POST, PUT, DELETE, UPDATE, PATCH']}));
-app.use(cors({origin: '*'}))
+app.use(cors({ methods: ['GET, POST, PUT, DELETE, UPDATE, PATCH'] }));
+app.use(cors({ origin: '*' }))
 
 const PORT = process.env.PORT || 8080;
 
 // Serve static files from public folder
 app.use(express.static('public'));
-// Serve static files from public folder
-app.use(express.static('public'));
 
-app.use(session({
-  secret: 'secret',
+// Session configuration - use memory store for development, production should use MongoDB/Redis
+const sessionConfig = {
+  secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
   resave: false,
-  saveUninitialized: true
-}));
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    sameSite: 'lax'
+  }
+};
+
+app.use(session(sessionConfig));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-// Use routes
-app.use(bodyParser.json());
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-requested-With, Content-Type, Accept, z-key'
-  );
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  next();
-})
-
+// Body parser and CORS
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -60,13 +51,13 @@ passport.use(new GithubStrategy({
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
   callbackURL: process.env.CALLBACK_URL
 },
-function(accessToken, refreshToken, profile, done) {
-  return done(null, profile);
-}
+  function (accessToken, refreshToken, profile, done) {
+    return done(null, profile);
+  }
 ));
 
 passport.serializeUser((user, done) => {
-    done(null, user);
+  done(null, user);
 });
 passport.deserializeUser((user, done) => {
   done(null, user);
@@ -77,10 +68,11 @@ app.get('/', (res, req) => {
 })
 
 app.get('/github/callback', passport.authenticate('github', {
-  failureRedirect: '/api-docs', session: false}),
+  failureRedirect: '/api-docs', session: false
+}),
   (req, res) => {
-      req.session.user = req.user;
-      res.redirect('/');
+    req.session.user = req.user;
+    res.redirect('/');
   })
 
 app.use('/', require('./routes/index.js'));
