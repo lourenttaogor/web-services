@@ -3,7 +3,9 @@ const ObjectID = require('mongodb').ObjectId;
 
 const getAllSubscription = async (req, res) => {
   try {
-    const result = await mongodb.getDatabase().db().collection('subscription').find();
+    // Get subscriptions for the logged-in user
+    const userId = new ObjectID(req.session.user.id);
+    const result = await mongodb.getDatabase().db().collection('subscription').find({ userId });
     result.toArray().then((subscriptions) => {
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json(subscriptions);
@@ -35,22 +37,28 @@ const getSingleSubscription = async (req, res) => {
 
 const createSubscription = async (req, res) => {
   try {
+    // Get userId from authenticated session
+    if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ message: 'Unauthorized - Please log in first' });
+    }
+
     // Validate required fields
-    if (!req.body.userId || !req.body.providerName || !req.body.monthlyCost || !req.body.category) {
+    if (!req.body.providerName || !req.body.monthlyCost || !req.body.category) {
       return res.status(400).json({
-        message: 'userId, providerName, monthlyCost, and category are required fields'
+        message: 'providerName, monthlyCost, and category are required fields'
       });
     }
 
     const subscriptions = {
-      userId: new ObjectID(req.body.userId),
+      userId: new ObjectID(req.session.user.id),
       providerName: req.body.providerName,
-      monthlyCost: req.body.monthlyCost,
+      monthlyCost: parseFloat(req.body.monthlyCost),
       category: req.body.category,
-      renewalDate: req.body.renewalDate,
-      paymentMethod: req.body.paymentMethod,
-      status: req.body.status,
-      description: req.body.description
+      renewalDate: req.body.renewalDate || null,
+      paymentMethod: req.body.paymentMethod || null,
+      status: req.body.status || 'Active',
+      description: req.body.description || null,
+      createdAt: new Date()
     };
 
     const response = await mongodb.getDatabase().db().collection('subscription').insertOne(subscriptions);

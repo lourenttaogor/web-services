@@ -3,18 +3,18 @@ const router = express.Router();
 
 const subscriptionController = require('../controllers/subscription');
 
-router.get('/', subscriptionController.getAllSubscription);
+const { IsAuthenticated } = require('../middleware/autheticate');
 
-router.get('/:id', subscriptionController.getSingleSubscription);
+// Protected routes - require authentication
+router.get('/', IsAuthenticated, subscriptionController.getAllSubscription);
 
-router.post('/', subscriptionController.createSubscription);
+router.get('/:id', IsAuthenticated, subscriptionController.getSingleSubscription);
 
-router.put('/:id', subscriptionController.updateSubscription);
+router.post('/', IsAuthenticated, subscriptionController.createSubscription);
 
-router.delete('/:id', subscriptionController.deleteSubscription);
+router.put('/:id', IsAuthenticated, subscriptionController.updateSubscription);
 
-
-
+router.delete('/:id', IsAuthenticated, subscriptionController.deleteSubscription);
 
 module.exports = router;
 

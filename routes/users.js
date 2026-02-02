@@ -3,13 +3,18 @@ const router = express.Router();
 
 const usersController = require('../controllers/users');
 
-router.get('/', usersController.getAllUsers);
+const { IsAuthenticated } = require('../middleware/autheticate');
 
-router.get('/:id', usersController.getSingleUsers);
+// Public routes
+router.post('/signup', usersController.signup);
+router.post('/login', usersController.login);
 
-router.post('/', usersController.createUsers);
+// Protected routes (require authentication)
+router.get('/', IsAuthenticated, usersController.getAllUsers);
 
-router.put('/:id', usersController.updateUsers);
+router.get('/:id', IsAuthenticated, usersController.getSingleUsers);
+
+router.put('/:id', IsAuthenticated, usersController.updateUsers);
 
 router.delete('/:id', usersController.deleteUsers);
 

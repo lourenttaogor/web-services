@@ -1,5 +1,6 @@
 const mongodb = require('../contacts/database');
 const ObjectID = require('mongodb').ObjectId;
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -49,6 +50,97 @@ const createUsers = async (req, res) => {
     } else {
       res.status(500).json({ message: 'Error creating user' });
     }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+// Sign up with email and password
+const signup = async (req, res) => {
+  try {
+    const { email, firstName, lastName, password, confirmPassword } = req.body;
+
+    // Validation
+    if (!email || !firstName || !lastName || !password || !confirmPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    }
+
+    // Check if user already exists
+    const existingUser = await mongodb.getDatabase().db().collection('users').findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'Email already registered' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const newUser = {
+      email,
+      firstName,
+      lastName,
+      password: hashedPassword,
+      accountCreated: new Date(),
+      authType: 'local'
+    };
+
+    const response = await mongodb.getDatabase().db().collection('users').insertOne(newUser);
+    if (response.acknowledged) {
+      res.status(201).json({
+        message: 'Account created successfully. Please log in.',
+        id: response.insertedId
+      });
+    } else {
+      res.status(500).json({ message: 'Error creating account' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+// Login with email and password
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    // Find user
+    const user = await mongodb.getDatabase().db().collection('users').findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Compare passwords
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Create session
+    req.session.user = {
+      id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      authType: 'local'
+    };
+
+    res.status(200).json({
+      message: 'Login successful',
+      user: req.session.user
+    });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
@@ -105,5 +197,7 @@ module.exports = {
   getAllUsers,
   createUsers,
   updateUsers,
-  deleteUsers
+  deleteUsers,
+  signup,
+  login
 };
