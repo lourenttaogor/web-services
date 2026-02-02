@@ -9,8 +9,15 @@ const GithubStrategy = require('passport-github2').Strategy;
 
 const app = express();
 
-app.use(cors({ methods: ['GET, POST, PUT, DELETE, UPDATE, PATCH'] }));
-app.use(cors({ origin: '*' }))
+// CORS configuration that preserves credentials for sessions
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://invidividual-project.onrender.com'
+    : ['http://localhost:8080', 'http://127.0.0.1:8080'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'UPDATE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 const PORT = process.env.PORT || 8080;
 
@@ -34,17 +41,8 @@ app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Body parser and CORS
+// Body parser
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-requested-With, Content-Type, Accept, z-key'
-  );
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  next();
-});
 
 passport.use(new GithubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
@@ -68,11 +66,20 @@ app.get('/', (res, req) => {
 })
 
 app.get('/github/callback', passport.authenticate('github', {
-  failureRedirect: '/api-docs', session: false
+  failureRedirect: '/login-page',
+  session: true
 }),
   (req, res) => {
-    req.session.user = req.user;
-    res.redirect('/');
+    // Store user info in session
+    req.session.user = {
+      id: req.user.id,
+      displayName: req.user.displayName,
+      username: req.user.username,
+      photos: req.user.photos,
+      profileUrl: req.user.profileUrl,
+      authType: 'github'
+    };
+    res.redirect('/subscriptions');
   })
 
 app.use('/', require('./routes/index.js'));
