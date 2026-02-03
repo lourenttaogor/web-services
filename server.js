@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const session = require('express-session');
 const GithubStrategy = require('passport-github2').Strategy;
+const MongoStore = require('connect-mongo').default;
 
 const app = express();
 
@@ -24,15 +25,21 @@ const PORT = process.env.PORT || 8080;
 // Serve static files from public folder
 app.use(express.static('public'));
 
-// Session configuration - use memory store for development, production should use MongoDB/Redis
+// Session configuration with MongoDB store for production
 const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
   resave: false,
   saveUninitialized: false,
+  store: new MongoStore({
+    mongoUrl: process.env.MONGO_URL,
+    dbName: process.env.MONGO_DB_NAME || 'contact-project',
+    touchAfter: 24 * 3600 // Lazy session update
+  }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    sameSite: 'lax'
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
   }
 };
 
