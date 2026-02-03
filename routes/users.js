@@ -16,7 +16,7 @@ router.get('/:id', IsAuthenticated, usersController.getSingleUsers);
 
 router.put('/:id', IsAuthenticated, usersController.updateUsers);
 
-router.delete('/:id', usersController.deleteUsers);
+router.delete('/:id', IsAuthenticated, usersController.deleteUsers);
 
 
 
