@@ -28,7 +28,10 @@ router.get('/subscriptions', (req, res) => {
 
 // API route to get current user info
 router.get('/api/user', (req, res) => {
-    if (req.session.user) {
+    console.log('Session:', req.session); // Debug logging
+    console.log('Session User:', req.session?.user); // Debug logging
+
+    if (req.session && req.session.user) {
         return res.status(200).json({
             loggedIn: true,
             user: {

@@ -22,6 +22,11 @@ app.use(cors({
 
 const PORT = process.env.PORT || 8080;
 
+// Trust proxy on Render
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Serve static files from public folder
 app.use(express.static('public'));
 
@@ -33,14 +38,18 @@ const sessionConfig = {
   store: new MongoStore({
     mongoUrl: process.env.MONGO_URL,
     dbName: process.env.MONGO_DB_NAME || 'contact-project',
-    touchAfter: 24 * 3600 // Lazy session update
+    touchAfter: 24 * 3600, // Lazy session update
+    crypto: {
+      secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production'
+    }
   }),
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    secure: false, // Set to false to work in development and with proxies
     sameSite: 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-  }
+  },
+  proxy: process.env.NODE_ENV === 'production' // Trust proxy headers on Render
 };
 
 app.use(session(sessionConfig));
